@@ -1,6 +1,3 @@
----
-docs/README.md
----
-
-Use this folder for documentation files related to Assignments.
-
+Timing for the Towers of Hanoi.
+Observation:
+The iterative version runs faster than the recursive version as the number of disks increases.  
