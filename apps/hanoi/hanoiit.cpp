@@ -9,12 +9,16 @@ void printIt(int , char , char );
 void MoveDisksHelper(stack<int> &, stack<int> &, char , char ) ;
 
 int main() {
-  for (auto numdisks: {3,5,6}) {
+  for (auto numdisks: {5,10,15,20,25,30,35}) {
       stack<int> source;
       stack<int> dest;
       stack<int> aux;
       cout << "Numdisks: " << numdisks << endl;
+      auto start = chrono::high_resolution_clock::now();
       moveDisks(numdisks, source, aux, dest);
+      auto end = chrono::high_resolution_clock::now();
+      chrono::duration<double, std::milli> elapsed = end - start;
+      cout << "Elapsed time: " << elapsed.count() << " ms" << endl;
       cout << "Moved " << numdisks << " pegs." <<  endl;
     }
     return 0;
@@ -82,9 +86,9 @@ void MoveDisksHelper(stack<int> &source, stack<int> &dest, char s, char d) {
 
 void printIt(int disk, char fromPeg, char toPeg) {
   // Do nothing for timing test, but otherwise
-  std::cout<< "Move disk "<<disk
-           << "from peg " << fromPeg
-           << "to peg " << toPeg << std::endl;
+//  std::cout<< "Move disk "<<disk
+//           << "from peg " << fromPeg
+//           << "to peg " << toPeg << std::endl;
 }
 
 

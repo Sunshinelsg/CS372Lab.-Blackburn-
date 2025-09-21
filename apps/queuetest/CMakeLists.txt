@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.8)
 
 #set the project name
-project(Assignment1)
+project(queuetest)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(../../include)
 
 #add the executable
-add_executable(assign1 assign1.cpp)
+add_executable(queuetest queuetest.cpp)
 
-add_executable(assign1it assign1it.cpp)
+add_executable(stacklist stacktest.cpp)
+
