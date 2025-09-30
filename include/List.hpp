@@ -6,15 +6,17 @@
 //
 #pragma once
 #include <functional>
+
 template <typename T>
 class List {
-private:
+protected:
 	class Node{
 	public:
 		T data;
 		Node *prev;
 		Node *next;
 		bool isHiddenNode = false;
+		bool deleted = false;
 	};
 	Node *head;
 	Node *tail;
@@ -23,17 +25,17 @@ public:
 	class const_iterator {
 		protected:
 			Node *current;
-			T & retrieve() const {return current->data; }
-			const_iterator( Node* p) : current(p) { }
+			T& retrieve() const {return current->data; }
+			const_iterator(Node* p) : current(p) { }
 			friend class List<T>;
 		
 		public:
 			const_iterator(): current(nullptr) { }
 
-			virtual const T & operator*() const {
+			const T& operator*() const {
 				return retrieve();
 			}
-
+			
 			const_iterator & operator++() {
 				current = current->next;
 				return *this;
@@ -51,6 +53,7 @@ public:
 			bool operator!=(const const_iterator & rhs) const  {
 				return !(*this == rhs);
 			}
+			Node* getNode()const { return current; }
 	};
 
 public:
@@ -116,9 +119,8 @@ public:
 		tail->next = nullptr;
 	};
 
-	List(T newData) {
-		setupList();
-		(head->next)->data = newData;
+	List(T newData) : List() {
+		push(newData);
 	}
 	// Here's how we go about implementing the rule of five, starting with the copy constructor
 	// and assignment operator.  
@@ -133,25 +135,25 @@ public:
 		// assignment operator
 		if (this != &rhs) {
 			deleteListContents();
-			head = rhs.head;
-			tail = rhs.tail;
-			rhs.head = nullptr; // prevent double delete
-			rhs.tail = nullptr; // prevent double delete
+			for (Node* curr = rhs.head->; curr != rhs.tail; curr = curr->next) {
+				push_back(curr->data);
+			}
 		}
 		return *this;
 	}
-	List(List &&rhs) { 
+	List(List &&rhs) noexcept:head(rhs.head), tail(rhs.tail){ 
 		// move constructor
-		deleteListContents();
-		head = rhs.head;
-		tail = rhs.tail;
+
 		rhs.head = nullptr; // prevent double delete
 		rhs.tail = nullptr; // prevent double delete
 	}
-	List & operator=(List &&rhs) {
+	List & operator=(List &&rhs) noexcept{
 		// move assignment operator
 		if (this != &rhs) {
 			deleteListContents();
+			delete head;
+			delete tail;
+
 			head = rhs.head;
 			tail = rhs.tail;
 			rhs.head = nullptr; // prevent double delete
@@ -193,13 +195,13 @@ public:
   // manipulate the contents of a list.
   
 	iterator insert(iterator itr, const T & x) {
-		Node *p = itr.current;
+		Node *p = itr.getNode();
 		Node *newNode = new Node{x, p->prev, p};
 		p->prev = p->prev->next = newNode;
 		return iterator{newNode};	
 	}
 	iterator erase(iterator itr) {
-		Node *p = itr.current;
+		Node *p = itr.getNode;
 		iterator iterToReturn{ p->next };
 		p->prev->next = p->next;
 		p->next->prev = p->prev;
