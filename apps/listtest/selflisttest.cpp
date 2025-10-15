@@ -58,7 +58,7 @@ int main() {
    std::cout << std::endl;
  
   // SelfList test cases
-  SelfList<int>::iterator value = aListOfIntegers.findIt(3);
+  SelfList<int>::iterator it = selfList.findIt(someValue);
   aListOfIntegers.traverse(printItem);
   std::cout << std::endl;
    value = aListOfIntegers.findIt(45);

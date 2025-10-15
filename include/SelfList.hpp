@@ -25,7 +25,7 @@ private:
         if (numDeleted >= numActive) {
             auto itr = this->List<T>::begin();
             while (itr != this->List<T>::end()) {
-                SelfList<T>::iterator selfItr(itr.current());
+                SelfList<T>::iterator selfItr(itr.current);
                if (!itr.IsDeleted()) {
                     itr = this->List<T>::erase(itr);
                     --numDeleted;
@@ -54,7 +54,7 @@ public:
     typename List<T>::iterator erase(typename List<T>::iterator itr) {
         if (itr == this->List<T>::end())
             return itr;
-        SelfList<T>::iterator selfItr(itr.current());
+        SelfList<T>::iterator selfItr(itr.current);
         itr.markDeleted = true;
         ++numDeleted;
         --numActive;
@@ -112,7 +112,7 @@ public:
         Node* getNode() const {
             return current;
         }
-    };
+
         iterator& operator++() {
             do {
                 this->current = this->current->next;
@@ -123,9 +123,6 @@ public:
             iterator old = *this;
             ++(*this);
             return old;
-        }
-        Node* getNode() const {
-            return this->current;
         }
         friend class SelfList<T>;
     };
@@ -154,7 +151,7 @@ public:
     void pop_back() {
         auto itr = this->List<T>::end();
         --itr;
-        SelfList<T>::iterator selfItr(itr.current());
+        SelfList<T>::iterator selfItr(itr.current);
        while (itr != this->List<T>::begin() && itr.current->deleted) {
             --itr;
         }
@@ -164,7 +161,7 @@ public:
     }
     void pop_front() {
         auto itr = this->List<T>::begin();
-        SelfList<T>::iterator selfItr(itr.current()); 
+        SelfList<T>::iterator selfItr(itr.current); 
         while (itr != this->List<T>::end() && itr.current->deleted) {
             ++itr;
         }
