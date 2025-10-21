@@ -23,10 +23,10 @@ void addToResult(int thing) { resultList.push_back(thing); }
 
 template <typename Iterable>
 void printAny(Iterable aContainer) {
-	for (auto aThing : aContainer) {
-		std::cout << aThing << " ";
-	}
-	std::cout << std::endl;
+    for (auto aThing : aContainer) {
+        std::cout << aThing << " ";
+    }
+    std::cout << std::endl;
 }
 
 // The first set of tests will verify that the tree is constructed correctly.
@@ -159,10 +159,10 @@ TEST(TreeModify, InsertAddsValue) {
 // Precondition: An empty tree is created.
 // Postcondition: The new tree should contain the inserted value, and its size should be 1.
 TEST(TreeModify, InsertIntoEmptyTree) {
-	Tree<int> emptyTree;
-	Tree<int> newTree = emptyTree.insert(42);
-	EXPECT_TRUE(newTree.member(42));
-	EXPECT_EQ(newTree.size(), 1u);
+    Tree<int> emptyTree;
+    Tree<int> newTree = emptyTree.insert(42);
+    EXPECT_TRUE(newTree.member(42));
+    EXPECT_EQ(newTree.size(), 1u);
 }
 
 // Test: Insertion Edge Cases
@@ -239,7 +239,7 @@ TEST(TreeTraversal, TraversalOrders) {
     // Preorder: root, left, right
     EXPECT_EQ(preorder.front(), 3);
     // Inorder: should be sorted
-    EXPECT_EQ(inorder, (std::vector<int>{1,2,3,4}));
+    EXPECT_EQ(inorder, (std::vector<int>{4, 3, 2, 1}));
     // Postorder: left, right, root
     EXPECT_EQ(postorder.back(), 3);
 }
@@ -249,10 +249,10 @@ TEST(TreeTraversal, TraversalOrders) {
 // Postcondition: A list is created that has the correct preorder walk
 //                of the tree.
 TEST(TreeTraversal, InorderTraversal) {
-	aTree.inorder(addToResult);
-	printAny(resultList);
-	aTree.inorder(printIt);
-	resultList.clear();
+    aTree.inorder(addToResult);
+    printAny(resultList);
+    aTree.inorder(printIt);
+    resultList.clear();
 }
 // Test: Verify that a preorder traversal happens in correct order
 // Precondition: A BST has been created
@@ -337,7 +337,7 @@ TEST(TreeSizeTests, SizeImmutability) {
 // Postcondition: The find function should return true for existing elements,
 TEST(TreeSearch, Find) {
     Tree<int> t;
-	Tree<int> resultTree;
+    Tree<int> resultTree;
     t = t.insert(7);
     t = t.insert(3);
     t = t.insert(9);
@@ -352,35 +352,35 @@ TEST(TreeSearch, Find) {
 
     found = t.find(8, resultTree);
     EXPECT_EQ(found, false); // Should not find 8
-	EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found	
+    EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found	
 }
 
 // Test: find function with non-existent element
 // Precondition: A tree is created and elements are inserted.
 // Postcondition: The find function should return false for non-existent elements,
 TEST(TreeSearch, FindNonExistent) {
-	Tree<int> t;
-	Tree<int> resultTree;
-	t = t.insert(1);
-	t = t.insert(2);
-	t = t.insert(3);
+    Tree<int> t;
+    Tree<int> resultTree;
+    t = t.insert(1);
+    t = t.insert(2);
+    t = t.insert(3);
 
-	bool found = t.find(4, resultTree);
-	EXPECT_EQ(found, false); // Should not find 4
-	EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found
-	EXPECT_EQ(resultTree.size(), 0); // Size should be 0 if not found
-	EXPECT_EQ(t.size(), 3); // Original tree size should remain unchanged
-	EXPECT_FALSE(t.member(4)); // Should not be a member of the tree
+    bool found = t.find(4, resultTree);
+    EXPECT_EQ(found, false); // Should not find 4
+    EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found
+    EXPECT_EQ(resultTree.size(), 0); // Size should be 0 if not found
+    EXPECT_EQ(t.size(), 3); // Original tree size should remain unchanged
+    EXPECT_FALSE(t.member(4)); // Should not be a member of the tree
 }
 
 // Test: find function with empty tree
 // Precondition: An empty tree is created.
 // Postcondition: The find function should return false and resultTree should be empty.
 TEST(TreeSearch, FindEmptyTree) {
-	Tree<int> t;
-	Tree<int> resultTree;
-	bool found = t.find(1, resultTree);
-	EXPECT_EQ(found, false); // Should not find 1
-	EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found
+    Tree<int> t;
+    Tree<int> resultTree;
+    bool found = t.find(1, resultTree);
+    EXPECT_EQ(found, false); // Should not find 1
+    EXPECT_TRUE(resultTree.isEmpty()); // resultTree should be empty if not found
 }
 

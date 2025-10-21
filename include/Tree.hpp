@@ -1,26 +1,3 @@
-//
-// File:    Tree.h
-// Author:  Adam.Lewis@athens.edu
-// Purpose:
-// Use C++ templates, STL classes and functions, and smart pointers to
-// implement a binary search tree.
-//
-// A binary search tree is defined as being either empty, or a 3-tuple
-// (left.subtree, value, right.subtree) where left.subtree is a binary search
-// tree that only contains values less than our value and right.subtree is a
-// binary search tree that only contains values larger than our value.
-//
-// Note: We are strongly encouraged by the C++ Core Guidelines to strive
-// for immutability in our data structures.  This means that we should not
-// modify the tree in place, but rather create a new tree that is a modified
-// version of the original tree.  This is a bit of a pain, but it is the
-// right thing to do.  It allows us to reason about our code more easily, and
-// it allows us to use the tree in a functional programming style.  
-// 
-// The downside of immutability is there are is a lot of copying of data.  This
-// is mitigated by the use of smart pointers, which allow us to share ownership. But even so,  
-// we should be careful about how we use this class to avoid unnecessary copies.
-//
 #pragma once
 
 #include <memory>
@@ -45,9 +22,75 @@ public:
 
     Tree() : root(nullptr) {}
 
-    // Example insert (recursive, sets parent pointer)
+    Tree(std::initializer_list<T> init) : root(nullptr) {
+        for (const T& val : init) {
+            insert(val);
+        }
+	}
+	Tree(const Tree& other) : root(other.root) {}
+	Tree& operator=(const Tree& other) {
+		if (this != &other) {
+			root = other.root;
+		}
+		return *this;
+	}
+	Tree(Tree&& other) noexcept : root(std::move(other.root)) {
+		other.root = nullptr;
+	}
+
+    // Insert function (already present)
     void insert(const T& val) {
         root = insertHelper(root, val, nullptr);
+    }
+
+    // Add these methods:
+    bool isEmpty() const {
+        return !root;
+    }
+
+    size_t size() const {
+        return sizeHelper(root);
+    }
+
+    bool member(const T& val) const {
+        return memberHelper(root, val);
+    }
+
+    Tree insert(T x) const {
+        Tree t = *this;
+        t.insert(x);
+        return t;
+    }
+
+    T root() const {
+        if (!root) throw std::runtime_error("Empty tree");
+        return root->value;
+    }
+
+    // Traversal methods
+    template<typename Func>
+    void preorder(Func visit) const {
+        preorderHelper(root, visit);
+    }
+    template<typename Func>
+    void inorder(Func visit) const {
+        inorderHelper(root, visit);
+    }
+    template<typename Func>
+    void postorder(Func visit) const {
+        postorderHelper(root, visit);
+    }
+
+    // Find method
+    bool find(const T& val, Tree& subtreeWhereFound) const {
+        Node* found = findHelper(root.get(), val);
+        if (found) {
+            subtreeWhereFound.root = std::make_shared<Node>(*found);
+            return true;
+        } else {
+            subtreeWhereFound.root = nullptr;
+            return false;
+        }
     }
 
 private:
@@ -59,6 +102,44 @@ private:
             node->right = insertHelper(node->right, val, node.get());
         // No duplicates
         return node;
+    }
+
+    size_t sizeHelper(std::shared_ptr<Node> node) const {
+        if (!node) return 0;
+        return 1 + sizeHelper(node->left) + sizeHelper(node->right);
+    }
+
+    bool memberHelper(std::shared_ptr<Node> node, const T& val) const {
+        if (!node) return false;
+        if (val == node->value) return true;
+        if (val < node->value) return memberHelper(node->left, val);
+        return memberHelper(node->right, val);
+    }
+
+    void preorderHelper(std::shared_ptr<Node> node, std::function<void(T)> visit) const {
+        if (!node) return;
+        visit(node->value);
+        preorderHelper(node->left, visit);
+        preorderHelper(node->right, visit);
+    }
+    void inorderHelper(std::shared_ptr<Node> node, std::function<void(T)> visit) const {
+        if (!node) return;
+        inorderHelper(node->left, visit);
+        visit(node->value);
+        inorderHelper(node->right, visit);
+    }
+    void postorderHelper(std::shared_ptr<Node> node, std::function<void(T)> visit) const {
+        if (!node) return;
+        postorderHelper(node->left, visit);
+        postorderHelper(node->right, visit);
+        visit(node->value);
+    }
+
+    Node* findHelper(Node* node, const T& val) const {
+        if (!node) return nullptr;
+        if (val == node->value) return node;
+        if (val < node->value) return findHelper(node->left.get(), val);
+        return findHelper(node->right.get(), val);
     }
 };
 
