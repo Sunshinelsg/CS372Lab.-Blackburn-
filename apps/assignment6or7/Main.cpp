@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
-#include "tree.hpp"
+#include <random>
+#include <algorithm>
+#include "Tree.hpp"
 #include "avltree.hpp"
 
 AVLTree<int> buildAVLTreeFromVector(const std::vector<int>& values) {
@@ -13,38 +15,42 @@ AVLTree<int> buildAVLTreeFromVector(const std::vector<int>& values) {
 }
 std::pair<double, double>& compare_search_times(const std::vector<int>& values, const AVLTree<int>& avlTree, const Tree<int>& tree) {
 	static std::pair<double, double> times;
-	// Measure AVL tree search time
+
+	std::vector<int>sample;
+	sample.reserve(100);
+	std::mt19937 gen(std::random_device{}());
+	std::uniform_int_distribution<> dist(0, static_cast<int>(values.size()) - 1);
+	for (int i = 0; i < 100 && !values.empty(); ++i)
+		sample.push_back(values[dist(gen)]);
+
 	auto startAVL = std::chrono::high_resolution_clock::now();
 	for (int value : values) {
 		avlTree.search(value);
 	}
 	auto endAVL = std::chrono::high_resolution_clock::now();
 	times.first = std::chrono::duration<double, std::milli>(endAVL - startAVL).count();
-	// Measure standard tree search time
+
 	auto startTree = std::chrono::high_resolution_clock::now();
 	for (int value : values) {
 		tree.member(value);
 	}
 	auto endTree = std::chrono::high_resolution_clock::now();
 	times.second = std::chrono::duration<double, std::milli>(endTree - startTree).count();
-	return times;
+		return times;
 }
 std::vector<int> randomTree_to_vector(const Tree<int>& tree) {
 	std::vector<int> values;
-	tree.inorder([&values](int val) { values.push_back(val); });
+	tree.inorder([&values](int val) {values.push_back(val); });
 	return values;
 }
 int main() {
-	std::vector<int> sizes = { 100, 500, 1000, 2500, 5000, 10000};
+	std::vector<int> sizes = { 100, 500, 1000, 2500, 5000, 10000 };
 
 	for (int n : sizes) {
-		auto randomTree = make_random_tree(n);
+		const auto randomTree = make_random_tree(n);
 		auto avlTree = buildAVLTreeFromVector(randomTree_to_vector(randomTree));
-		auto times = compare_search_times(randomTree_to_vector(randomTree), avlTree, randomTree);
-		std::cout << "Size: " << n
-			<< " | AVL Search Time: " << times.first << " ms"
-			<< " | Standard Tree Search Time: " << times.second << " ms"
-			<< std::endl;
+		const auto& times = compare_search_times(randomTree_to_vector(randomTree), avlTree, randomTree);
+		std::cout << "Sizes:" << n << " | AVL Search Time: " << times.first << " ms" << " | Standard Tree Search Time:" << times.second << " ms" << std::endl;
 	}
 	return 0;
 }

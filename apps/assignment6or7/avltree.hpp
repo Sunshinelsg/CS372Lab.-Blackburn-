@@ -199,6 +199,17 @@ public:
     void remove(int key) {
         root = deleteNode(root, key);
     }
+    bool search(int key) const {
+        AVLNode* current = root;
+        while (current != nullptr) {
+            if (key == current->key)
+                return true;
+            else if (key < current->key) current = current->left;
+            else
+                current = current->right;
+        }
+        return false;
+    }
 
     void display() {
         inorder(root);

@@ -10,5 +10,6 @@ include_directories(../../include)
 
 #add the executable
 add_executable(avltree avltree.cpp)
+add_executable(main main.cpp)
 
 
