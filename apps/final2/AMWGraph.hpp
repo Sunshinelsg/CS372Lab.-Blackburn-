@@ -21,23 +21,23 @@ using namespace std;
 
 template <class N>
 class WeightedAdjMatrixGraph: public Graph<N> {
-private:
-    using Edge = tuple<N, N, int>;
-    std::vector<N> nodes;
+private: 
+    vector<N> nodes;
     const static int maxSize = 10;
     short adjMatrix[maxSize][maxSize] = {};
     int numNodes = 0;
-    int findNodeInMatrix(N x) {
+
+    int findNodeInMatrix(N x) const {
         for (int j = 0; j < numNodes; ++j)
         {
-            if (x == nodes[j])
-            {
-                return j;
-            }
+            if (x == nodes[j]) return j;           
         }
         return -1;
     }
 public:
+    using Edge = tuple<N, N, int>;
+    using EdgeList = vector<Edge>;
+
     // Default constructor, create empty
     WeightedAdjMatrixGraph() {};
 
@@ -62,7 +62,6 @@ public:
                 if (destIndex != -1)
                 {
                     adjMatrix[sourceIndex][destIndex] = std::get<2>(edge);
-                    adjMatrix[destIndex][sourceIndex] = std::get <2>(edge);
                 }
             }
         }
@@ -73,30 +72,24 @@ public:
     // dynamic memory so can use system provided destructor.
     ~WeightedAdjMatrixGraph() {};
 
-    bool adjacent(N x, N y) {
-        bool result = false;
+    bool adjacent(N x, N y) override {
         int xIndex = findNodeInMatrix(x);
         int yIndex = findNodeInMatrix(y);
-        if ((xIndex != -1) && (yIndex != -1))
-        {
-            short xy = adjMatrix[xIndex][yIndex];
-            if (xy == 1) { result = true; };
-        }
-        return(result);
+        return(xIndex != -1 && yIndex != -1 && adjMatrix[xIndex][yIndex] > 0);
     }
 
-    vector<N>& neighbors(N x)  {
-        vector<N>* v = new vector<N>();
+    vector<N> neighbors(N x) override {
+        vector<N> result;
         int xIndex = findNodeInMatrix(x);
         if (xIndex != -1)
         {
             for (int i = 0; i < numNodes; ++i) {
                 if (adjMatrix[xIndex][i] > 0) {
-                    v->push_back(nodes[i]);
+                    result.push_back(nodes[i]);
                 }
             }
         }
-        return *v;
+        return result;
     }
 
     void addNode(N node)  {
@@ -127,11 +120,11 @@ public:
         deleteEdgeWithWeight(x, y, 0);
 	}
 
-	int getEdgeWeight(N x, N y) const {
-		int xIndex = findNodeInMatrix(x);
-		int yIndex = findNodeInMatrix(y);
-		return adjMatrix[xIndex][yIndex];
-	}
+    int getEdgeWeight(N x, N y) const {
+        int xIndex = findNodeInMatrix(x);
+        int yIndex = findNodeInMatrix(y);
+        return adjMatrix[xIndex][yIndex];
+    };
 
 	EdgeList getEdges(N aNode) {
 		EdgeList edges;
