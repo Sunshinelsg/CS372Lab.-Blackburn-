@@ -6,6 +6,8 @@
 #include <initializer_list>
 #include <ostream>
 #include <random>
+#include <queue>
+#include <list>
 
 template<typename T>
 class Tree
@@ -93,6 +95,9 @@ public:
         return Tree(_root->_rgt);
     }
 
+    bool isLeaf() const {
+        return !isEmpty() && left().isEmpty() && right().isEmpty();
+    }
     //
     // Now we manipulate the tree.
     // Note how insert operates... we don't try to "fix" an existing tree.
@@ -240,4 +245,30 @@ inline Tree<int>& make_random_tree(int n) {
         t = t.insert(value);
     }
     return t;
+}
+template <typename T>
+std::list <T> fringe(const Tree<T>& t) {
+    std::list<T>result;
+    if (t.isEmpty())return result;
+
+    std::queue <Tree<T>>q;
+    q.push(t);
+
+    while (!q.empty()) {
+        Tree<T> current = q.front();
+        q.pop();
+
+        if (current.isLeaf()) {
+            result.push_back(current.root());
+        }
+        else {
+            if (!current.left().isEmpty()) q.push(current.left());
+            if (!current.right().isEmpty()) q.push(current.right());
+        }
+    }
+    return result;
+}
+template <typename T>
+bool sameFringe(const Tree<T>& t1, const Tree<T>& t2) {
+    return fringe(t1) == fringe(t2);
 }
